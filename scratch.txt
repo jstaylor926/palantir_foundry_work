@@ -1,0 +1,644 @@
+# Enum sheets (Python + TypeScript)
+
+Below are ready-to-drop “enum sheets” for both projects. I picked canonical program values (`"A330 GE"`, `"A330 RR"`) and included alias normalization so inputs like `"A330GE"`/`"A330RR"` resolve cleanly. Names include Unicode (e.g., `Fréry`), so keep files UTF-8.
+
+---
+
+## `enums.py` (Python)
+
+```python
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+from enum import Enum
+from typing import Dict, Tuple, Iterable
+
+
+# ---------- Owner Orgs ----------
+
+class OwnerOrg(str, Enum):
+    DAIA = "DAIA"
+    DAI = "DAI"
+    AIB = "AIB"
+    DAL = "DAL"
+    GE = "GE"
+    DTO = "DTO"
+
+
+OWNER_BY_ORG: Dict[OwnerOrg, Tuple[str, ...]] = {
+    OwnerOrg.DAIA: (
+        "Frank Obusek",
+        "Joshua Taylor",
+        "Juan Leon",
+        "Rodger Stallworth",
+        "Rong Huang",
+    ),
+    OwnerOrg.DAI: (
+        "A. Lacombe",
+        "J-A. Honyigloh",
+        "Julian Klein",
+        "S. Benabid",
+        "C. Fréry",
+    ),
+    OwnerOrg.AIB: (
+        "Mathieu Mongermont",
+        "Brian Gaze",
+        "Pierre Seyte",
+    ),
+    OwnerOrg.DAL: ("Stephen Hoare",),
+    OwnerOrg.GE: (
+        "D. Fernandez",
+        "D. Mancera",
+        "E. Casagrande",
+        "P. Bennetts",
+        "R. Natarajan",
+    ),
+    OwnerOrg.DTO: (
+        "Lu Qin",
+        "Dustin Ames",
+        "Graison Fuller",
+    ),
+}
+
+ALL_OWNERS: Tuple[str, ...] = tuple(
+    name for group in OWNER_BY_ORG.values() for name in group
+)
+
+OWNER_TO_ORGS: Dict[str, Tuple[OwnerOrg, ...]] = {}
+for org, people in OWNER_BY_ORG.items():
+    for person in people:
+        OWNER_TO_ORGS.setdefault(person, tuple())
+        OWNER_TO_ORGS[person] = tuple(sorted(set(OWNER_TO_ORGS[person] + (org,)), key=lambda o: o.value))
+
+
+# ---------- Subjects ----------
+
+class Subject(str, Enum):
+    Development = "Development"
+    Integration = "Integration"
+    _100_20_3 = "100-20-3"
+    Deployment = "Deployment"
+    Improvement = "Improvement"
+    Model_Update = "Model Update"
+    Process_Improvement = "Process Improvement"
+    Tool = "Tool"
+    Customer = "Customer"
+    ALL = "ALL"
+    AZU = "AZU"
+    DAL = "DAL"
+    EZY = "EZY"
+    GAP = "GAP"
+    JST = "JST"
+    PAL = "PAL"
+    QFA = "QFA"
+    SAS = "SAS"
+    SKU = "SKU"
+    VIV = "VIV"
+    VOI = "VOI"
+
+
+# ---------- Programs (with alias normalization) ----------
+
+class Program(str, Enum):
+    A320 = "A320"
+    A330 = "A330"
+    A350 = "A350"
+    A220 = "A220"
+    A330PW_CEO = "A330PW CEO"
+    A330_GE = "A330 GE"
+    A330_RR = "A330 RR"
+    Non_Airbus = "Non Airbus"
+    ALL = "ALL"
+    NA = "N/A"
+
+
+# Exact-string aliases → canonical
+PROGRAM_ALIASES: Dict[str, Program] = {
+    "A330GE": Program.A330_GE,
+    "A330RR": Program.A330_RR,
+}
+
+def normalize_program(value: str) -> Program:
+    """Return canonical Program; raises ValueError if unknown."""
+    key = value.strip()
+    if key in PROGRAM_ALIASES:
+        return PROGRAM_ALIASES[key]
+    try:
+        return Program(key)  # exact match to canonical values
+    except ValueError as e:
+        raise ValueError(f"Unknown Program '{value}'. Allowed: {[p.value for p in Program]}") from e
+
+
+# ---------- ATA Chapters ----------
+
+class ATAChapter(str, Enum):
+    ATA_21 = "ATA 21"
+    ATA_24 = "ATA 24"
+    ATA_27 = "ATA 27"
+    ATA_27_FCFS = "ATA 27 FCFS"
+    ATA_27_FCROLL = "ATA 27 FCROLL"
+    ATA_29 = "ATA 29"
+    ATA_32 = "ATA 32"
+    ATA_36 = "ATA 36"
+    ATA_72_HPC = "ATA 72 - HPC"
+    ATA_72_HPT = "ATA 72 - HPT"
+    ATA_73_BP = "ATA 73 - BP"
+    ATA_73_N1_Shortfall = "ATA 73 - N1 Shortfall"
+    ATA_73_TER = "ATA 73 - TER"
+    ATA_73_FFDP = "ATA 73 - FFDP"
+    ATA_75_HPTACC = "ATA 75 - HPTACC"
+    ATA_75_Nacelle_Temp_High = "ATA 75 - Nacelle Temp High"
+    ATA_77_Vib_Mx = "ATA 77 - Vib Mx"
+    ALL = "ALL"
+    NA = "N/A"
+
+
+# ---------- Milestones ----------
+
+class Milestone(str, Enum):
+    QG0 = "QG0"
+    QG1 = "QG1"
+    QG2 = "QG2"
+    New_Customer = "New Customer"
+    Tool = "Tool"
+    Customer = "Customer"
+    ALL = "ALL"
+    NA = "N/A"
+
+
+# ---------- Status & Priority ----------
+
+class Status(str, Enum):
+    Not_Started = "Not Started"
+    In_Progress = "In Progress"
+    Pending_Reply = "Pending Reply"
+    Done = "Done"
+    Skipped = "Skipped"
+
+
+class Priority(str, Enum):
+    HIGH = "HIGH"
+    MEDIUM = "MEDIUM"
+    LOW = "LOW"
+
+
+# ---------- Helpers ----------
+
+def is_member(value: str, enum_cls: Enum.__class__) -> bool:
+    try:
+        enum_cls(value)
+        return True
+    except ValueError:
+        return False
+
+def list_values(enum_cls: Enum.__class__) -> Tuple[str, ...]:
+    return tuple(e.value for e in enum_cls)
+
+__all__ = [
+    "OwnerOrg", "OWNER_BY_ORG", "ALL_OWNERS", "OWNER_TO_ORGS",
+    "Subject", "Program", "normalize_program", "ATAChapter",
+    "Milestone", "Status", "Priority", "is_member", "list_values",
+]
+```
+
+---
+
+## `enums.ts` (TypeScript)
+
+```ts
+/* eslint-disable @typescript-eslint/ban-types */
+// Keep this file UTF-8; it contains names like "Fréry".
+
+// ---------- Owner Orgs ----------
+
+export const OWNER_ORGS = ["DAIA", "DAI", "AIB", "DAL", "GE", "DTO"] as const;
+export type OwnerOrg = typeof OWNER_ORGS[number];
+
+export const OWNER_BY_ORG: Readonly<Record<OwnerOrg, readonly string[]>> = {
+  DAIA: ["Frank Obusek", "Joshua Taylor", "Juan Leon", "Rodger Stallworth", "Rong Huang"],
+  DAI: ["A. Lacombe", "J-A. Honyigloh", "Julian Klein", "S. Benabid", "C. Fréry"],
+  AIB: ["Mathieu Mongermont", "Brian Gaze", "Pierre Seyte"],
+  DAL: ["Stephen Hoare"],
+  GE: ["D. Fernandez", "D. Mancera", "E. Casagrande", "P. Bennetts", "R. Natarajan"],
+  DTO: ["Lu Qin", "Dustin Ames", "Graison Fuller"],
+} as const;
+
+export const ALL_OWNERS = Object.freeze(
+  Object.values(OWNER_BY_ORG).flat()
+);
+
+export const OWNER_TO_ORGS = Object.freeze(
+  ALL_OWNERS.reduce<Record<string, OwnerOrg[]>>((acc, person) => {
+    const orgs = (Object.entries(OWNER_BY_ORG) as [OwnerOrg, readonly string[]][])
+      .filter(([, people]) => people.includes(person))
+      .map(([org]) => org);
+    acc[person] = orgs;
+    return acc;
+  }, {})
+);
+
+// ---------- Subjects ----------
+
+export const SUBJECTS = [
+  "Development",
+  "Integration",
+  "100-20-3",
+  "Deployment",
+  "Improvement",
+  "Model Update",
+  "Process Improvement",
+  "Tool",
+  "Customer",
+  "ALL",
+  "AZU",
+  "DAL",
+  "EZY",
+  "GAP",
+  "JST",
+  "PAL",
+  "QFA",
+  "SAS",
+  "SKU",
+  "VIV",
+  "VOI",
+] as const;
+export type Subject = typeof SUBJECTS[number];
+
+export const isSubject = (v: string): v is Subject =>
+  (SUBJECTS as readonly string[]).includes(v);
+
+// ---------- Programs (with alias normalization) ----------
+
+export const PROGRAMS = [
+  "A320",
+  "A330",
+  "A350",
+  "A220",
+  "A330PW CEO",
+  "A330 GE",
+  "A330 RR",
+  "Non Airbus",
+  "ALL",
+  "N/A",
+] as const;
+export type Program = typeof PROGRAMS[number];
+
+export const PROGRAM_ALIASES: Readonly<Record<string, Program>> = Object.freeze({
+  A330GE: "A330 GE",
+  A330RR: "A330 RR",
+});
+
+export function normalizeProgram(input: string): Program {
+  const key = input.trim();
+  const mapped = PROGRAM_ALIASES[key as keyof typeof PROGRAM_ALIASES];
+  if (mapped) return mapped;
+  if ((PROGRAMS as readonly string[]).includes(key)) return key as Program;
+  throw new Error(
+    `Unknown Program '${input}'. Allowed: ${PROGRAMS.join(", ")}`
+  );
+}
+
+export const isProgram = (v: string): v is Program =>
+  (PROGRAMS as readonly string[]).includes(v) || v in PROGRAM_ALIASES;
+
+// ---------- ATA Chapters ----------
+
+export const ATA_CHAPTERS = [
+  "ATA 21",
+  "ATA 24",
+  "ATA 27",
+  "ATA 27 FCFS",
+  "ATA 27 FCROLL",
+  "ATA 29",
+  "ATA 32",
+  "ATA 36",
+  "ATA 72 - HPC",
+  "ATA 72 - HPT",
+  "ATA 73 - BP",
+  "ATA 73 - N1 Shortfall",
+  "ATA 73 - TER",
+  "ATA 73 - FFDP",
+  "ATA 75 - HPTACC",
+  "ATA 75 - Nacelle Temp High",
+  "ATA 77 - Vib Mx",
+  "ALL",
+  "N/A",
+] as const;
+export type ATAChapter = typeof ATA_CHAPTERS[number];
+
+export const isATAChapter = (v: string): v is ATAChapter =>
+  (ATA_CHAPTERS as readonly string[]).includes(v);
+
+// ---------- Milestones ----------
+
+export const MILESTONES = [
+  "QG0",
+  "QG1",
+  "QG2",
+  "New Customer",
+  "Tool",
+  "Customer",
+  "ALL",
+  "N/A",
+] as const;
+export type Milestone = typeof MILESTONES[number];
+
+export const isMilestone = (v: string): v is Milestone =>
+  (MILESTONES as readonly string[]).includes(v);
+
+// ---------- Status & Priority ----------
+
+export const STATUSES = [
+  "Not Started",
+  "In Progress",
+  "Pending Reply",
+  "Done",
+  "Skipped",
+] as const;
+export type Status = typeof STATUSES[number];
+
+export const PRIORITIES = ["HIGH", "MEDIUM", "LOW"] as const;
+export type Priority = typeof PRIORITIES[number];
+
+export const isStatus = (v: string): v is Status =>
+  (STATUSES as readonly string[]).includes(v);
+export const isPriority = (v: string): v is Priority =>
+  (PRIORITIES as readonly string[]).includes(v);
+```
+
+---
+
+### Notes
+
+* **Programs:** Canonical values use spaced variants (`"A330 GE"`, `"A330 RR"`). Use `normalize_program`/`normalizeProgram` to map `"A330GE"`/`"A330RR"` inputs.
+* **Owner names:** If a person ever belongs to multiple orgs, both sheets already support that (`OWNER_TO_ORGS` will reflect it).
+* **Diacritics:** Keep files in UTF-8 so names like `Fréry` remain intact.
+
+Want me to also export these from a single JSON source (so Python/TS stay in sync automatically)?
+
+# Single Source of Truth: `enums.json` → Python & TypeScript
+
+Below is a **single JSON file** you can check into the repo and load from both projects. I’ve included tiny shims for Python and TypeScript that **derive strongly-typed enums/unions at build/runtime**, plus a normalization helper for Program aliases.
+
+---
+
+## 1) `enums.json`
+
+```json
+{
+  "owners": {
+    "DAIA": ["Frank Obusek", "Joshua Taylor", "Juan Leon", "Rodger Stallworth", "Rong Huang"],
+    "DAI": ["A. Lacombe", "J-A. Honyigloh", "Julian Klein", "S. Benabid", "C. Fréry"],
+    "AIB": ["Mathieu Mongermont", "Brian Gaze", "Pierre Seyte"],
+    "DAL": ["Stephen Hoare"],
+    "GE": ["D. Fernandez", "D. Mancera", "E. Casagrande", "P. Bennetts", "R. Natarajan"],
+    "DTO": ["Lu Qin", "Dustin Ames", "Graison Fuller"]
+  },
+  "subjects": [
+    "Development",
+    "Integration",
+    "100-20-3",
+    "Deployment",
+    "Improvement",
+    "Model Update",
+    "Process Improvement",
+    "Tool",
+    "Customer",
+    "ALL",
+    "AZU",
+    "DAL",
+    "EZY",
+    "GAP",
+    "JST",
+    "PAL",
+    "QFA",
+    "SAS",
+    "SKU",
+    "VIV",
+    "VOI"
+  ],
+  "programs": {
+    "values": [
+      "A320",
+      "A330",
+      "A350",
+      "A220",
+      "A330PW CEO",
+      "A330 GE",
+      "A330 RR",
+      "Non Airbus",
+      "ALL",
+      "N/A"
+    ],
+    "aliases": {
+      "A330GE": "A330 GE",
+      "A330RR": "A330 RR"
+    }
+  },
+  "ataChapters": [
+    "ATA 21",
+    "ATA 24",
+    "ATA 27",
+    "ATA 27 FCFS",
+    "ATA 27 FCROLL",
+    "ATA 29",
+    "ATA 32",
+    "ATA 36",
+    "ATA 72 - HPC",
+    "ATA 72 - HPT",
+    "ATA 73 - BP",
+    "ATA 73 - N1 Shortfall",
+    "ATA 73 - TER",
+    "ATA 73 - FFDP",
+    "ATA 75 - HPTACC",
+    "ATA 75 - Nacelle Temp High",
+    "ATA 77 - Vib Mx",
+    "ALL",
+    "N/A"
+  ],
+  "milestones": ["QG0", "QG1", "QG2", "New Customer", "Tool", "Customer", "ALL", "N/A"],
+  "statuses": ["Not Started", "In Progress", "Pending Reply", "Done", "Skipped"],
+  "priorities": ["HIGH", "MEDIUM", "LOW"]
+}
+```
+
+---
+
+## 2) TypeScript loader (`enums.ts`)
+
+> Requires `tsconfig.json`: `"resolveJsonModule": true, "esModuleInterop": true`
+
+```ts
+// enums.ts
+import raw from "./enums.json";
+
+// Shape guard for the JSON (lightweight)
+type EnumsJson = {
+  owners: Record<string, string[]>;
+  subjects: string[];
+  programs: { values: string[]; aliases: Record<string, string> };
+  ataChapters: string[];
+  milestones: string[];
+  statuses: string[];
+  priorities: ("HIGH" | "MEDIUM" | "LOW")[];
+};
+
+const enums = raw as EnumsJson;
+
+// ---- Owner orgs ----
+export type OwnerOrg = keyof typeof enums.owners;
+export const OWNER_ORGS = Object.freeze(Object.keys(enums.owners)) as readonly OwnerOrg[];
+export const OWNER_BY_ORG = enums.owners as Readonly<Record<OwnerOrg, readonly string[]>>;
+export const ALL_OWNERS = Object.freeze(Object.values(OWNER_BY_ORG).flat());
+
+export const OWNER_TO_ORGS = Object.freeze(
+  ALL_OWNERS.reduce<Record<string, OwnerOrg[]>>((acc, person) => {
+    const orgs = (Object.entries(OWNER_BY_ORG) as [OwnerOrg, readonly string[]][])
+      .filter(([, people]) => people.includes(person))
+      .map(([org]) => org);
+    acc[person] = orgs;
+    return acc;
+  }, {})
+);
+
+// ---- Subjects ----
+export const SUBJECTS = enums.subjects as readonly string[];
+export type Subject = typeof SUBJECTS[number];
+export const isSubject = (v: string): v is Subject => SUBJECTS.includes(v);
+
+// ---- Programs (+ aliases) ----
+export const PROGRAMS = enums.programs.values as readonly string[];
+export type Program = typeof PROGRAMS[number];
+export const PROGRAM_ALIASES = enums.programs.aliases as Readonly<Record<string, Program>>;
+
+export function normalizeProgram(input: string): Program {
+  const key = input.trim();
+  const mapped = PROGRAM_ALIASES[key];
+  if (mapped) return mapped;
+  if (PROGRAMS.includes(key)) return key as Program;
+  throw new Error(`Unknown Program '${input}'. Allowed: ${PROGRAMS.join(", ")}`);
+}
+export const isProgram = (v: string): v is Program =>
+  PROGRAMS.includes(v) || v in PROGRAM_ALIASES;
+
+// ---- ATA Chapters ----
+export const ATA_CHAPTERS = enums.ataChapters as readonly string[];
+export type ATAChapter = typeof ATA_CHAPTERS[number];
+export const isATAChapter = (v: string): v is ATAChapter => ATA_CHAPTERS.includes(v);
+
+// ---- Milestones ----
+export const MILESTONES = enums.milestones as readonly string[];
+export type Milestone = typeof MILESTONES[number];
+export const isMilestone = (v: string): v is Milestone => MILESTONES.includes(v);
+
+// ---- Statuses & Priorities ----
+export const STATUSES = enums.statuses as readonly string[];
+export type Status = typeof STATUSES[number];
+export const PRIORITIES = enums.priorities as readonly ["HIGH", "MEDIUM", "LOW"];
+export type Priority = typeof PRIORITIES[number];
+
+export const isStatus = (v: string): v is Status => STATUSES.includes(v);
+export const isPriority = (v: string): v is Priority => PRIORITIES.includes(v);
+```
+
+**TS usage example**
+
+```ts
+import { Program, normalizeProgram, OWNER_BY_ORG } from "./enums";
+
+const p: Program = normalizeProgram("A330GE"); // → "A330 GE"
+console.log(OWNER_BY_ORG.DAIA);
+```
+
+---
+
+## 3) Python loader (`enums_runtime.py`)
+
+```python
+# -*- coding: utf-8 -*-
+from __future__ import annotations
+import json
+import re
+from enum import Enum
+from pathlib import Path
+from typing import Dict, Tuple
+
+# Load the single source of truth
+_ENS_PATH = Path(__file__).with_name("enums.json")
+with _ENS_PATH.open("r", encoding="utf-8") as f:
+    DATA = json.load(f)
+
+def _identifier_from_value(v: str) -> str:
+    """Convert an arbitrary label into a valid Python Enum member name."""
+    s = re.sub(r"[^0-9A-Za-z]+", "_", v).strip("_").upper()
+    if not s or s[0].isdigit():
+        s = "_" + s
+    return s
+
+def make_str_enum(name: str, values: Tuple[str, ...]) -> Enum.__class__:
+    members = { _identifier_from_value(v): v for v in values }
+    return Enum(name, members, type=str)  # type: ignore[arg-type]
+
+# ---- Owner orgs ----
+OwnerOrg = Enum("OwnerOrg", {k: k for k in DATA["owners"].keys()}, type=str)  # type: ignore[arg-type]
+OWNER_BY_ORG: Dict[OwnerOrg, Tuple[str, ...]] = {
+    OwnerOrg[k]: tuple(v) for k, v in DATA["owners"].items()
+}
+ALL_OWNERS: Tuple[str, ...] = tuple(x for xs in OWNER_BY_ORG.values() for x in xs)
+OWNER_TO_ORGS: Dict[str, Tuple[OwnerOrg, ...]] = {}
+for org, people in OWNER_BY_ORG.items():
+    for person in people:
+        OWNER_TO_ORGS.setdefault(person, tuple())
+        OWNER_TO_ORGS[person] = tuple(sorted(set(OWNER_TO_ORGS[person] + (org,)), key=lambda o: o.value))
+
+# ---- Subjects ----
+Subject = make_str_enum("Subject", tuple(DATA["subjects"]))
+
+# ---- Programs (+ aliases) ----
+Program = make_str_enum("Program", tuple(DATA["programs"]["values"]))
+PROGRAM_ALIASES: Dict[str, str] = dict(DATA["programs"]["aliases"])
+
+def normalize_program(value: str) -> Program:
+    key = value.strip()
+    key = PROGRAM_ALIASES.get(key, key)
+    try:
+        return Program(key)  # type: ignore[call-arg]
+    except ValueError as e:
+        allowed = ", ".join(m.value for m in Program)  # type: ignore[attr-defined]
+        raise ValueError(f"Unknown Program '{value}'. Allowed: {allowed}") from e
+
+# ---- ATA Chapters ----
+ATAChapter = make_str_enum("ATAChapter", tuple(DATA["ataChapters"]))
+
+# ---- Milestones ----
+Milestone = make_str_enum("Milestone", tuple(DATA["milestones"]))
+
+# ---- Statuses & Priorities ----
+Status = make_str_enum("Status", tuple(DATA["statuses"]))
+Priority = make_str_enum("Priority", tuple(DATA["priorities"]))
+
+# ---- Helpers ----
+def list_values(enum_cls: Enum.__class__) -> Tuple[str, ...]:
+    return tuple(e.value for e in enum_cls)  # type: ignore[no-any-return]
+
+__all__ = [
+    "OwnerOrg", "OWNER_BY_ORG", "ALL_OWNERS", "OWNER_TO_ORGS",
+    "Subject", "Program", "normalize_program",
+    "ATAChapter", "Milestone", "Status", "Priority", "list_values",
+]
+```
+
+**Python usage example**
+
+```python
+from enums_runtime import Program, normalize_program, OWNER_BY_ORG, OwnerOrg
+
+p = normalize_program("A330RR")   # Program("A330 RR")
+print(OWNER_BY_ORG[OwnerOrg.DAIA])
+```
+
+---
+
+## 4) Optional: Codegen (if you prefer static files)
+
+If you’d rather **generate** `enums.ts`/`enums.py` as static artifacts (instead of loading JSON at runtime), I can provide a tiny Node or Python script to emit both from `enums.json`. Just say the word and tell me which direction you prefer (Node-based or Python-based generator).
+

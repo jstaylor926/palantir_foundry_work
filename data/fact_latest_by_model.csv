@@ -1,0 +1,18 @@
+program,ata,variant,latest_status,latest_date,note,model_key
+A320,21,NAN,,2025-04-03,ATA 21: Juan to set a meeting with the CS team to go over the RCA,A320:21:NAN
+A320,27,NAN,,2025-04-03,ATA 27: - QG1 for next week (target Thursday for QG1),A320:27:NAN
+A320,32,NAN,Issue,2025-04-03,"ATA 32: Brake dragging issue, front end issue, work-around on MOCA",A320:32:NAN
+A320,36,NAN,In Mpval,2025-04-03,"ATA 36: Are in MPVAL, Juan checks to see if they are good.",A320:36:NAN
+A320,36,CEO,MPVAL Pushed,2025-04-03,"3 models were successfully pushed to MPVAL A320 ATA36 CEO, A330 ATA32, A330 ATA36 NEO. DAIA has requested support to CS to identify the reason why A320 ATA36 NEO DAR and A330 ATA36 CEO FOMAX are showing empty alerts.",A320:36:CEO
+A320,36,NEO,MPVAL Pushed,2025-04-03,ATA 36 NEO: Successfully pushed to MPVAL,A320:36:NEO
+A330,21,NAN,,2025-02-14,ATA21: Juan Leon will provide ADC data CW8 as soon as the preparation work is completed.,A330:21:NAN
+A330,32,NAN,MPVAL Pushed,2025-04-03,ATA 32: Successfully pushed to MPVAL,A330:32:NAN
+A330,36,CEO,MPVAL Pushed,2025-04-03,"3 models were successfully pushed to MPVAL A320 ATA36 CEO, A330 ATA32, A330 ATA36 NEO. DAIA has requested support to CS to identify the reason why A320 ATA36 NEO DAR and A330 ATA36 CEO FOMAX are showing empty alerts.",A330:36:CEO
+A330,36,NEO,MPVAL Pushed,2025-04-03,"3 models were successfully pushed to MPVAL A320 ATA36 CEO, A330 ATA32, A330 ATA36 NEO. DAIA has requested support to CS to identify the reason why A320 ATA36 NEO DAR and A330 ATA36 CEO FOMAX are showing empty alerts.",A330:36:NEO
+A350,21,NAN,,2025-04-03,"ATA 21: ACMS reports needed 01, 03, 04, Landing if possible",A350:21:NAN
+A350,24,NAN,,2025-03-27,ATA24: patricia.bennetts@geaerospace.com Please propose a schedule for developing ATA24 models by the next follow-up meeting.,A350:24:NAN
+A350,27,NAN,,2025-02-14,"ATA27 (QAR): Discussion between Erik Casacandra and Stephen Hoare to be concluded today. Tech session to be setup next week to prepare for QG0 on CW9. Goal of the tech review is to align on removal counts, ATA6Ds, Part Numbers, data windows, and any other checklist items to prepare for QG0 review.",A350:27:NAN
+A350,27,NAN,Scheduled,2025-03-13,"Eric is focusing on A320 during MArch, A330 April and then back to A350 in June. QG0 for ATA27-FCFS can be held middle April, QG1 middle June in parallel. QG1 for ATA27-FCROLL can be scheduled end of May.",A350:27:NAN
+A350,29,NAN,,2025-03-27,ATA29: patricia.bennetts@geaerospace.com We need to identify a QG0 date now that the material has been provided. Please propose a QG0 date for ATA29.,A350:29:NAN
+A350,32,NAN,,2025-04-03,ATA 32,A350:32:NAN
+A350,36,NAN,Scheduled,2025-02-14,ATA36 (QAR): Tech review between GE and Juan Leon scheduled for Wednesday 19th.,A350:36:NAN

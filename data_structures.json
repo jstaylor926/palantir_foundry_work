@@ -1,0 +1,114 @@
+{
+  "IntegrationCase": {
+    "caseId": "string",
+    "name": "string",
+    "envTarget": "string",              // e.g., DEV, MPVAL, PROD
+    "phase": "string",                  // e.g., Prep, Validation, Deployment
+    "status": "string",                 // e.g., NotStarted, InProgress, Blocked, Complete
+    "riskLevel": "string",              // e.g., Low, Medium, High
+    "plannedStart": "date",
+    "plannedEnd": "date",
+    "actualStart": "date",
+    "actualEnd": "date",
+    "partnerId": "string",
+    "program": "string",
+    "ataChapter": "string",
+    "lastUpdated": "timestamp"
+  },
+
+  "Partner": {
+    "partnerId": "string",
+    "partnerName": "string",
+    "status": "string",                 // e.g., Active, Onboarding, Suspended
+    "contactEmail": "string",
+    "country": "string"
+  },
+
+  "ModelVersion": {
+    "modelVersionId": "string",
+    "modelName": "string",
+    "versionString": "string",
+    "status": "string",                 // e.g., Development, Testing, Approved, Deployed
+    "description": "string",
+    "createdOn": "date",
+    "partnerId": "string"
+  },
+
+  "IntegrationTask": {
+    "taskId": "string",
+    "caseId": "string",
+    "title": "string",
+    "status": "string",                 // e.g., ToDo, InProgress, Blocked, Done
+    "priority": "string",               // e.g., LOW, MEDIUM, HIGH, CRITICAL
+    "dueDate": "date",
+    "owner": "string",
+    "labels": ["string"]
+  },
+
+  "IntegrationGate": {
+    "gateId": "string",
+    "caseId": "string",
+    "name": "string",                   // e.g., QG0, Pre-Deployment Review
+    "decision": "string",               // e.g., Pending, Passed, Failed, Skipped
+    "decisionDate": "timestamp",
+    "approver": "string"
+  },
+
+  "Artifact": {
+    "artifactId": "string",
+    "type": "string",                   // e.g., ValidationReport, LogFile, Script
+    "path": "string",
+    "note": "string",
+    "createdOn": "timestamp"
+  },
+
+  "RiskIssue": {
+    "riskId": "string",
+    "caseId": "string",
+    "description": "string",
+    "severity": "string",               // e.g., High, Medium, Low
+    "status": "string",                 // e.g., Open, Closed
+    "mitigationPlan": "string",
+    "owner": "string",
+    "openedOn": "timestamp",
+    "closedOn": "timestamp"
+  },
+
+  "ValidationResult": {
+    "resultId": "string",
+    "caseId": "string",
+    "gateId": "string",
+    "type": "string",                   // e.g., Performance, Security, Compliance
+    "outcome": "string",                // e.g., Pass, Fail, Running
+    "summary": "string",
+    "reportRid": "string",
+    "date": "timestamp"
+  },
+
+  "WorkPackage": {
+    "workPackageId": "string",
+    "title": "string",
+    "program": "string",
+    "partnerId": "string",
+    "timeboxStart": "date",
+    "timeboxEnd": "date"
+  },
+
+  "MPValPushRequest": {
+    "pushId": "string",
+    "caseId": "string",
+    "modelVersionId": "string",
+    "status": "string",                 // e.g., Requested, InProgress, Pushed, Failed
+    "requestedBy": "string",
+    "requestedAt": "timestamp",
+    "completedAt": "timestamp",
+    "modelPath": "string",
+    "spmStaticConfigPath": "string"
+  },
+
+  "Role": {
+    "roleId": "string",
+    "roleName": "string",
+    "assigneeEmail": "string"
+  }
+}

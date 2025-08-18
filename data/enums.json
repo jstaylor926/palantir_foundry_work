@@ -1,0 +1,23 @@
+{
+  "subject": [
+    "MPVAL",
+    "QG0",
+    "QG1",
+    "QG1L"
+  ],
+  "status": [
+    "In Mpval",
+    "Issue",
+    "KO",
+    "MPVAL Pushed",
+    "Passed",
+    "Scheduled"
+  ],
+  "milestone": [
+    "MPVAL",
+    "QG0",
+    "QG1",
+    "QG1L"
+  ],
+  "priority": []
+}
