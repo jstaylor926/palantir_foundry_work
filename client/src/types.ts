@@ -86,6 +86,56 @@ const STATUSES = [
 ]
 
 const PRIORITIES = ["HIGH", "MEDIUM", "LOW"]
+export type EnvTarget = "DEV" | "MPVAL" | "PROD";
+export type CasePhase = "Prep" | "Validation" | "Deployment" | "Post-Deployment";
+export type CaseStatus = "NotStarted" | "InProgress" | "Blocked" | "Complete";
+export type RiskLevel = "Low" | "Medium" | "High";
+
+export interface IntegrationCase {
+    caseId: string;
+    name: string;
+    envTarget: EnvTarget;
+    phase: CasePhase;
+    status: CaseStatus;
+    riskLevel: RiskLevel;
+    plannedStart?: string;
+    plannedEnd?: string;
+    actualStart?: string;
+    actualEnd?: string;
+    lastUpdated: string;
+}
+
+export type TaskStatus = "ToDo" | "InProgress" | "Blocked" | "Done";
+export interface IntegrationTask {
+    taskId: string;
+    caseId: string;
+    title: string;
+    status: TaskStatus;
+    dueDate?: string;
+    owner?: string;
+}
+
+export type GateDecision = "Pending" | "Passed" | "Failed" | "Skipped";
+export interface IntegrationGate {
+    gateId: string;
+    caseId: string;
+    name: string;             // e.g., ValidationRequested, QG1, QG2
+    decision: GateDecision;
+    decisionDate?: string;
+    approver?: string;
+    note?: string;
+}
+
+export interface Artifact {
+    artifactId: string;
+    caseId: string;
+    taskId?: string;
+    gateId?: string;
+    type: "ValidationReport" | "LogFile" | "Script" | "doc" | "weights" | "log";
+    path: string;
+    createdOn: string;
+    note?: string;
+}
 
 
 export { OWNER_ORGANIZATION, OWNER_BY_ORGAZIATION, PRIORITIES, SUBJECTS, PROGRAMS, ATA_CHAPTERS, MILESTONES, STATUSES };
